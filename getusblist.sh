@@ -9,7 +9,11 @@ for sysdevpath in $(find /sys/bus/usb/devices/usb*/ -name dev); do
 #       [[ -z "$ID_SERIAL" ]] && continue
 #        echo "/dev/$devname - $ID_SERIAL"
 	[[ -z "$SUBSYSTEM" ]] && continue
-	echo "/dev/$devname - $SUBSYSTEM"
+    #echo "/dev/$devname - $SUBSYSTEM"
+    if [ "$SUBSYSTEM" = "tty" ];
+    then
+        echo "/dev/$devname"
+    fi
     )
 done
 
