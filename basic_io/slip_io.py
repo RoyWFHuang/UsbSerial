@@ -1,29 +1,30 @@
 #!/usr/bin/python
 # coding=UTF-8
+import sys
 import serial_io
 import subprocess
 import time
 import net_io
+sys.path.append("./util")
+import util_lib
 
 
 def start_if_serial_to_net(self):
     success, list = serial_io.get_serial_list()
-    self.assertTrue(success)
-    cmd = "slattach " + list.replace('\n', '').replace('\r', '') +\
-        " -p slip -s 115200 &"
-    if subprocess.call(cmd, shell=True):
-        print "Err: Tty to slip interface fail"
-        self.assertTrue(False)
-    else:
-        self.assertTrue(True)
-    time.sleep(1)
-    return True
+    if success:
+    #self.assertTrue(success)
+        cmd = "slattach " + list.replace('\n', '').replace('\r', '') + \
+            " -p slip -s 115200 &"
+        success = util_lib.system_call_return(cmd)
+        self.assertTrue(success)
+        time.sleep(1)
+        return True
+    return False
 
 def stop_if_serial_to_net(self):
-    return_code = subprocess.call("sudo kill -9 $(ps -ef | grep slattach | " +
-        "grep -v grep | awk '{print $2}')", shell=True)
-    #print return_code
-    return True
+    cmd = "sudo kill -9 $(ps -ef | grep slattach | " + \
+        "grep -v grep | awk '{print $2}')"
+    return util_lib.system_call_return(cmd)
 
 def get_slip_if(self):
     cmd = "ifconfig -a | grep sl | awk '{print $1}' |  grep -P '\d'"

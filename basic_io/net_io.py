@@ -10,7 +10,7 @@ def start_up_net_if(net_if = []):
     #cmd = []
     for x in net_if:
         cmd_str = "sudo ifconfig " + x +" up"
-        subprocess.call(cmd_str, shell=True)
+        util_lib.system_call_return(cmd_str)
         #cmd.append(cmd_str)
     return True
 
