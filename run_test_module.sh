@@ -15,12 +15,17 @@ if [ -z $1 ]; then
       sudo python -m unittest -f ${test%.*}
     done
 else
-    test_item=$(strip_test_item "$1")
-    echo -e "Running test module: ${test_item}"
-    sudo python -m unittest -f -v ${test_item}
-    if [ $? -ne 0 ]; then
-        echo -e
-        echo -e "error return"
-        echo -e
+    echo "$1"
+    if [ "$1" == "clean_pyc" ]; then
+        find . -name "*.pyc" -exec rm -f {} \;
+    else
+        test_item=$(strip_test_item "$1")
+        echo -e "Running test module: ${test_item}"
+        sudo python -m unittest -f -v ${test_item}
+        if [ $? -ne 0 ]; then
+            echo -e
+            echo -e "error return"
+            echo -e
+        fi
     fi
 fi

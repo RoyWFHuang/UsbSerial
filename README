@@ -1,0 +1,14 @@
+How to use
+
+Test all under network_test testing group
+$ sudo run_test_module.sh network_test
+
+Test all network_test - under ipv4 ping cmd test(no specify interface)
+$ sudo run_test_module.sh network_test.test_ipv4_net_cmd_ping
+
+Test network_test - ipv4 ping cmd test(specify slip interface)
+$ sudo run_test_module.sh network_test.test_ipv4_net_cmd_ping.test_slip
+
+Test all firmeware_test function
+$ sudo run_test_module.sh firmeware_testroy
+
