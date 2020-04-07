@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding=UTF-8
 import serial
+import signal
 import threading
 import sys
 from time import sleep
@@ -72,29 +73,45 @@ def hexsend(string_data=''):
     hex_data = string_data.decode("hex")
     return hex_data
 
-
+def sigint (signum, frame):
+        print 'get exit'
+        exitflag = 1
+def sigterm (signum, frame):
+    print "SIGTERM"
 
 #class TestBasicIoSetting(unittest.TestCase):
 #    def test_ping_msg(self):
 
 
 if __name__ == '__main__':
+    ##signal.signal(signal.SIGINT, sigint)
+    #signal.signal(signal.SIGTERM, sigterm)
     answer = subprocess.check_output(['./getusblist.sh'])
-    print answer
     #print("the answer is {}".format(answer))
-    serial = serial.Serial(answer.replace('\n', '').replace('\r', ''), 115200)
+    serial_list = answer.split('\n')
+    while("" in serial_list) :
+        serial_list.remove("")
+    print serial_list
+    serial_io = []
+    for x in serial_list:
+        tmp = serial.Serial(x, 115200)
+        serial_io.append(tmp)
     # /dev/ttyUSB0
 
-    print serial
-    if serial.isOpen():
-        print("open success")
-    else:
-        print("open failed")
+    print serial_io
 
-    read_thread = threading.Thread(target=read_data, args = (serial,))
-    write_thread = threading.Thread(target=write_data, args = (serial,))
-    read_thread.start()
-    write_thread.start()
+    thread_pool = []
+    for x in serial_io:
+        if x.isOpen():
+            print("open success")
+        else:
+            print("open failed")
+        read_thread = threading.Thread(target=read_data, args = (x,))
+        write_thread = threading.Thread(target=write_data, args = (x,))
+        read_thread.start()
+        write_thread.start()
+        thread_pool.append(read_thread)
+        thread_pool.append(write_thread)
     try:
         while True:
             sleep(1)
@@ -102,13 +119,15 @@ if __name__ == '__main__':
         print 'get exit'
         exitflag = 1
 
-    print 'wait exit read'
-    read_thread.join()
-    print 'wait exit write'
-    write_thread.join()
-
-    if serial != None:
-        serial.close()
+    for x in thread_pool:
+        x.join()
+    #print 'wait exit read'
+    #read_thread.join()
+    #print 'wait exit write'
+    #write_thread.join()
+    for x in serial_io:
+        if x != None:
+            x.close()
 
 
 
