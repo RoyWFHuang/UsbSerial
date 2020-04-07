@@ -52,4 +52,34 @@ class test_ipv4_net_cmd_ping(unittest.TestCase):
         self.assertTrue(success)
         # de-setp env
         return True
+class test_ipv6_net_cmd_ping(unittest.TestCase):
+    slip_list = []
+    # test class pre-init function
+    def setUp(self):
+        success, self.slip_list = slip_io.create_testing_env_slip(self)
+        self.assertTrue(success);
+
+    # test class termination function
+    def tearDown(self):
+        slip_io.stop_testing_env_slip(self)
+
+    # define test unit
+    def test_slip(self):
+        # setup env
+        # start test
+        success = net_io.setup_ipv6_ip(self.slip_list[0], "2001:0db8:0:f101::1", "64")
+        self.assertTrue(success)
+        success = cmd_ping(self.slip_list[0], "fe08::781d00ff:fe00");
+        self.assertTrue(success)
+        # de-setp env
+        return True
+
+    # define test unit
+    def test_eth(self):
+        print "Run: %s:%s" % (self.__class__.__name__, inspect.stack()[0][3])
+        # setup env
+        # start test
+        success = cmd_ping("lo", "::1");
+        self.assertTrue(success)
+        # de-setp env
         return True
