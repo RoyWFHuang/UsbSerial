@@ -6,13 +6,18 @@ import subprocess
 #import slip.dbus.service
 
 def get_serial_list():
-    return True, subprocess.check_output(['./getusblist.sh'])
+    list = subprocess.check_output(['./getusblist.sh'])
+    if list ==  "":
+        return False, None
+    return True, list
 
 def serial_dev(self):
     success, list = get_serial_list()
-    self.assertTrue(success)
-    serial = serial.Serial(list.replace('\n', '').replace('\r', ''), 115200)
-    return True, serial
+    if success:
+        self.assertTrue(success)
+        serial = serial.Serial(list.replace('\n', '').replace('\r', ''), 115200)
+        return True, serial
+    return False, None
 
 
 

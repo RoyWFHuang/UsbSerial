@@ -37,13 +37,14 @@ replace(':', '').split('\n')
 def create_testing_env_slip(self):
 # init slip
     success = start_if_serial_to_net(self)
-    self.assertTrue(success)
-    success, slip_list = get_slip_if(self)
-    for x in slip_list:
-        print "slip list %s" % x
+    if success:
+        success, slip_list = get_slip_if(self)
+        for x in slip_list:
+            print "slip list %s" % x
 # start net if
-    net_io.start_up_net_if(slip_list)
-    return True, slip_list
+        net_io.start_up_net_if(slip_list)
+        return True, slip_list
+    return False, None
 
 def stop_testing_env_slip(self):
     stop_if_serial_to_net(self)
